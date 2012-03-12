@@ -1,0 +1,224 @@
+<!doctype html>
+<head>
+  <script src="https://raw.github.com/jrburke/requirejs/master/require.js"
+    type="text/javascript"></script>
+  <script src="https://raw.github.com/davidcalhoun/touche/master/touche.js"
+    type="text/javascript"></script>
+
+  <script type="text/javascript">
+    require.config({
+      packages: [{
+        name: "simple-touch",
+        location: "src/"
+      }]
+    });
+  </script>
+
+  <style type="text/css" rel="stylesheet">
+  html {
+    background-color: grey;
+  }
+
+  div {
+    border: 1px solid black;
+    padding: 40px;
+  }
+
+  #target {
+    background-color: red;
+  }
+
+  #source {
+    background-color: blue;
+  }
+
+  #source li {
+    padding: 10px;
+  }
+
+  #dragger {
+    background-color: green;
+  }
+
+  #dragger2 {
+    background-color: yellow;
+  }
+
+  #boundsWrapper {
+    float: right;
+    height: 300px;
+    width: 300px;
+    background-color: #EEE;
+    position: relative;
+    padding: 0;
+  }
+
+  #bounds {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .stAvatar {
+    padding: 10px;
+    border: 1px solid black;
+    background-color: white;
+  }
+
+  .stMover.stSnapOut {
+    border-color: red;
+  }
+
+  .stMover.stOverTarget {
+    border-color: green;
+  }
+
+  .stSplitter {
+    border: 0;
+    border-top: 1px solid black;
+    margin: 2px 0;
+    padding: 0;
+  }
+
+  .stSplitter.horizontal {
+    border: 0;
+    border-left: 1px solid black;
+    margin: 0px 2px;
+    padding: 0;
+    float: left;
+    clear: left;
+  }
+
+  #grid li {
+    display: block;
+    width: 150px;
+    height: 150px;
+    float: left;
+    border: 1px solid blue;
+  }
+
+  #grid {
+    background-color: green;
+    height: 600px;
+    width: 600px;
+  }
+  </style>
+</head>
+
+<p>A drop target:</p>
+<div id="target"></div>
+
+<p>A sortable drag source:</p>
+<ul id="source">
+  <li class="stuff"><span class="handle"><span>Item 1</span></span></li>
+  <li class="stuff">Item 2</li>
+  <li class="stuff handle">Item 3</li>
+  <li class="stuff">Item 4</li>
+  <li class="stuff">Item 5</li>
+</ul>
+
+<p>A sortable grid drag source:</p>
+<ul id="grid">
+  <li><span class="handle"><span>Item 1</span></span></li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+  <li>Item 4</li>
+  <li>Item 5</li>
+</ul>
+
+<div id="boundsWrapper">
+Try dragging the yellow block over here.
+</div>
+
+<p>The green block can move freely.</p>
+<div id="dragger"></div>
+
+<p>The yellow block uses the white div to the right as its  breakable bounds.</p>
+<div id="dragger2"></div>
+
+
+
+<script type="text/javascript">
+require(["simple-touch/target", "simple-touch/source", "simple-touch/mover"],
+  function(Target, Source, Mover) {
+
+  var target = new Target(document.getElementById('source'));
+
+  var target = new Target(document.getElementById('target'));
+
+  var sourceNode = document.getElementById('source');
+  var source = new Source(sourceNode, {
+    //dragTargetMatcher: 'stuff',
+    dragTimer: 40,
+    //dragHandleClass: 'handle',
+    moverOptions: {
+      anchor: 'middle',
+      bounds: sourceNode,
+      snapBounds: true
+    }
+  });
+
+  var gridNode = document.getElementById('grid');
+
+  var gridSource = new Source(gridNode, {
+    dragTimer: 40,
+    moverOptions: {
+      bounds: gridNode,
+      topBoundCallback: function() {
+        //console.log(arguments);
+      },
+      bottomBoundCallback: function() {
+        //console.log(arguments);
+      },
+      snapBounds: true
+    }
+  });
+
+  var gridTarget = new Target(gridNode, {
+    orientation: 'grid',
+    sortInternalOnly: true
+  });
+
+  new Source(target.node);
+
+  var dragger = document.getElementById('dragger');
+  var mover = new Mover(dragger, {
+    startCallback: function() {
+      //console.log(arguments);
+    },
+    stopCallback: function() {
+      //console.log(arguments);
+    },
+    moveCallback: function() {
+      //console.log(arguments);
+    },
+    anchor: 'middle',
+    autostart: true
+  });
+
+  var dragger2 = document.getElementById('dragger2');
+  var mover2 = new Mover(dragger2, {
+    bounds: document.getElementById('boundsWrapper'),
+    boundsOutCallback: function() {
+      //console.log('boundsOutCallback', arguments);
+    },
+    boundsInCallback: function() {
+      //console.log('boundsInCallback', arguments);
+    },
+    anchor: {
+      x: 20,
+      y: 20
+    },
+    snapBounds: true,
+    autostart: true
+  });
+
+});
+
+window.onload = function() {
+  document.onselectstart = function() {return false;} // ie
+  document.onmousedown = function() {return false;} // mozilla
+}
+
+</script>
