@@ -189,3 +189,4 @@ TODO
 - At least do some smoke testing.
 - Port AMD module to a simple object version, concatenated and minified for
   people not cool enough to use AMD.
+- Plenty of optimization.
